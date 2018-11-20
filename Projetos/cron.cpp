@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define CRACK 15
+#define DELAY 15 // Ajuste para o seu delay ideal, Tanto mais alto mais devagar,
+		 // e Valor baixo rapido. Tente equilibrar para deixar que nem um cronometro real
 
 int seg = 0;
 int min = 0;
@@ -29,7 +30,7 @@ void marcar()
 		usleep(0);
 		system("cls");
 		printf("%i:%i:%i:%i:%i",hor,min,seg,ml,mls);
-		if(mls == CRACK)
+		if(mls == DELAY)
 		{
 			ml++;
 			mls = 0;
