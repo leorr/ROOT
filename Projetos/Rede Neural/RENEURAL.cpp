@@ -1,4 +1,4 @@
-// DECLARA«√O DAS BIBLIOTECAS
+// DECLARA√á√ÉO DAS BIBLIOTECAS
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
