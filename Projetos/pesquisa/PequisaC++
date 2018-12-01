@@ -1,14 +1,16 @@
 #include <cstring>
 #include <string>
 #include <iostream>
+
 using namespace std;
 int main(void)
 {		
 	printf("Abrindo pagina WEB ( Pesquisador Google)\n");
+	printf("Obs: Troque o espaço por +\n");
 	string variavel;
-	cin>>variavel;
-	system(("start http://www.google.com.br/search?q=" + variavel).c_str());
+	getline(cin, variavel);
+	cout<< variavel;
+	system(("start http://www.google.com.br/search?q="+variavel).c_str());
 	return 0;
 }
-	
 	
