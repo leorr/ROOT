@@ -1,0 +1,11 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+
+int main(void)
+{		
+	printf("Abrindo pagina WEB ( Pesquisador Google)");
+	Sleep(1000);
+	system("start http://www.google.com.br/search?q=");
+	return 0;
+}
