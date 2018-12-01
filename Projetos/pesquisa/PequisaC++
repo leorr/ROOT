@@ -1,11 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <Windows.h>
-
+#include <cstring>
+#include <string>
+#include <iostream>
+using namespace std;
 int main(void)
 {		
-	printf("Abrindo pagina WEB ( Pesquisador Google)");
-	Sleep(1000);
-	system("start http://www.google.com.br/search?q=");
+	printf("Abrindo pagina WEB ( Pesquisador Google)\n");
+	string variavel;
+	cin>>variavel;
+	system(("start http://www.google.com.br/search?q=" + variavel).c_str());
 	return 0;
 }
+	
+	
