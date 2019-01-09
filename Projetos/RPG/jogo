@@ -1,0 +1,460 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <math.h>
+#include <time.h>
+#define MAX_NPC 35
+
+#define SIM 1
+#define NAO 0
+
+#define SISTEMA_OPERACIONAL 2 // 2 windows 1 linux
+// funcoes independente da plataforma
+void definir_titulo(char *titulo) {
+    if(SISTEMA_OPERACIONAL == 1)
+    {
+	    char comando[80];
+	    // coloca o texto o titulo dentro do comando title
+	    // fica assim "title krats *titulo"
+	    snprintf(comando,80,"echo title %s",titulo);
+	    system(comando); // envia o comando
+	}
+	if(SISTEMA_OPERACIONAL == 2)
+	{
+		char comando[80];
+		snprintf(comando,80,"title %s",titulo);
+		system(comando);
+	}
+}
+// sorteia um valor aleatorio e zero a cem,
+// se estiver dentro da porcentagem ele retorna sim.
+// exemplo se vc chamar sortear(20) tem 20% de chance de retornar sim
+int sortear(int porcentagem_de_sorte) 
+{
+    if((rand() % 100)<porcentagem_de_sorte)
+    {
+        return SIM;
+    } else 
+	{
+        return NAO;
+    }
+}
+void limpar_tela() {
+    if(SISTEMA_OPERACIONAL == 1)
+    {
+    	system("clear");
+	}
+	if(SISTEMA_OPERACIONAL == 2)
+    {
+    	system("cls");
+	}
+}
+// fim das minhas funcoes
+
+///
+int mostrar_sim_ou_nao() {
+    printf("\nescolha uma opcao");
+   	printf("\n1 - Sim");
+   	printf("\n2 - Nao\n~~>");
+   	int opcao_escolhida=-1;
+    scanf("%i",&opcao_escolhida);
+    return opcao_escolhida==1;
+}
+///
+
+int mostrar_opcoes(char *opcoes[],int numero_de_opcoes) {
+    // se for passado um ponteiro nullo vai mostrar um erro e fechar a funcao
+    if(opcoes==NULL) {
+        printf("erro ao exibir o menu. ponteiro nulo");
+        return -1;
+    }
+    int c;
+    // mostra todas as opcoes
+    for(c=0;c<numero_de_opcoes;c++) {
+        printf("\n%d) %s \n",c+1,opcoes[c]);
+    }
+    int opcao_escolhida=-1;
+    printf("--------------------------------\n");
+	printf("escolha uma opcao\n~~>");
+
+    scanf("%i",&opcao_escolhida);
+    return opcao_escolhida;
+
+}
+
+
+
+int primeira_vez = SIM;
+int escolher[5];
+
+typedef struct  // structs
+{
+	char nome[100];
+    int vida;
+    int bloqueo;
+    int dano;
+    int sorte;
+    int level;
+    int ouro;
+} NPC;
+
+typedef struct
+{
+    char nome[100];
+    int vida;
+    int bloqueo;
+    int dano;
+    int sorte;
+    int leve;
+    int preco;
+} ITEM;
+
+// um array com todos os itens do jogo com atr
+ITEM itens[] = {
+	// nome            		 VID  DEF  ATK   SOR  LEVEL   PREÇO
+	{"Botas de Couro",   	  0,   5,   0,    0,    0,     100},
+	{"Botas de Ferro",   	  0,  10,   0,    0,    0,     250},
+	{"Botas de Ouro",    	  0,  15,   0,    0,    0,     350},
+	{"Botas do Gnomo",   	  0,   5,   0,   25,    0,     540},
+	{"Botas da Morte", 		-20,  25,   0,  -20,    0,     850},
+	{"Botas de diamantes",    0,  30,   0,    1,    0,     1200},
+	{"Botas da vida",		 20,  15,   0,    0,    0,     1500},
+
+};
+// um array contendo todos os npcs do jogo com atr
+NPC npcs[] = {
+    // NOME     		       DEF    ATK  SOR LEVEL OURO
+    {"Sentinela",  		100,    5,     11,    2,   1,  5},
+    {"Orc",     		100,   15,     16,   13,  2,  7},
+    {"Morcego", 		100,    7,     12,   4,   1,  4},
+    {"Rato",    		100,    2,     9,    3,   1,  5},
+    {"Urso",    		100,   13,     20,   20,  2,  11},
+    {"Medusa",  		100,   23,     25,   15,  3,  16},
+    {"Borboleta", 		100,    3,     2,    5,   1,  20},
+    {"Aranha",  		100,    3,     10,   2,   1,  5},
+    {"Formiga Gigante", 100,   13,     14,   9,   2,  11},
+    {"Escopiao",		100,    4,     15,   2,   1,  10},
+    {"Harpia",  		100,    20,    25,   15,  3,  30},
+    {"Leao",    		100,    15,    20,   20,  3,  26},
+    {"Grifos",  		100,    20,    26,   15,  4,  35},
+    {"Quimera", 		100,    13,    16,   10,  3,  15},
+    {"Minotauro",   	100,    19,    23,   14,  3,  25},
+    {"Lobisomem",   	100,    18,    24,   17,  3,  10},
+    {"Vampiro",     	100,    12,    17,   15,  2,  13},
+    {"Furia Alecto",	100,    40,    36,   13,  5,  12},
+    {"Furia Megera",	100,    30,    32,   51,  5,  19},
+    {"Furia Tisífone",	100,    20,    28,   42,  3,  13},
+    {"Hidra",       	100,    15,    21,   2,   3,  15},
+    {"Viuva-Negra", 	100,    16,    22,   5,   4,  18},
+    {"Esqueleto Azul",  100,    19,    24,   9,   3,  19},
+    {"Juagua",			100,    13,    14,   15,  3,  20},
+    {"Deus-Jagua",		100,    20,    32,   15,  3,  43},
+    {"Dragão Roxo",		100,    19,    23,   24,  3,  50},
+    {"Dragão-de-Komodo",100,    15,    20,   0,   3,  35},
+    {"Serpente Verde",  100,    12,    16,   13,  2,  10},
+    {"Serpente Azul",   100,    14,    17,   12,  3,  20},
+    {"Serpente Rosa",   100,    16,    18,   9,   3,  30},
+    {"Serpente Dourada",100,    20,    32,   3,   4,  40},
+    {"Gnomo Maldito", 	100,    25,    30,   4,   3,  60},
+    {"Orc Dourado",		100,    30,    36,   2,   4,  15},
+    {"Morcego Azul",	100,    40,    36,   1,   6,  25},
+    {"Jagua Dourado",	100,    50,    53,   7,   9,  30},
+    {"SrBlue",			100,    60,    60,   70,  10,  150} // bixo puta rarao. (Eatter Egg)
+};
+
+
+
+typedef struct
+{
+    char nome[50];
+    int vida;
+    int bloqueo;
+    int dano;
+    int sorte;
+    int level;
+    int ouro;
+    int classe;
+} PLAYER;
+// FAZER CLASSE
+// tipo assim 1 é guerreiro 2 é  arqueiro etc
+
+//recebe o um ponteiro que indica qual player vai ser inicializado
+void iniciar_player(PLAYER *player)
+{
+        // aqui tem que ser colocado os valores padrao
+        player->vida = 100;
+        player->bloqueo = 5;
+        player->dano = 12;
+        player->level = 1;
+        player->sorte = 15;
+        player->ouro = 0;
+}
+
+PLAYER player;
+NPC npc;
+void escolher_npc(NPC *_npc,int numero_do_npc) 
+{
+    memcpy(_npc,&npcs[numero_do_npc],sizeof(NPC));
+}
+void escolher_npc_aleatorio(NPC *_npc) 
+{
+    escolher_npc(_npc,rand()%MAX_NPC);
+}
+void escolher_npc_nome(NPC *_npc,char *nome) 
+{
+    int c;
+    int encontrou=NAO;
+    for(c=0;c<MAX_NPC;c++) 
+	{
+        if(strcmp(nome, npcs[c].nome)==0) 
+		{
+            escolher_npc(_npc,c);
+            encontrou=SIM;
+            break;
+        }
+
+    }
+    if(encontrou==NAO) {
+        printf("\nERRO NPC NAO ENCONTRADO.");
+        escolher_npc(_npc,0);
+    }
+
+}
+
+void flood();
+void iniciar();
+void aventura(); // karai das voids
+void menu();
+void regras();
+void atacar(NPC *inimigo);
+void receber_ataque(NPC *inimigo);
+int main(void)
+{
+	setlocale(LC_ALL, "Portuguese");
+	srand(time(NULL));
+    // inicializa o player com os valores default
+    iniciar_player(&player);
+    escolher_npc_aleatorio(&npc);
+    menu();
+    return 1;
+}
+void menu()
+{
+   ; // menu
+    limpar_tela();
+    definir_titulo("krats - menu");
+    printf("\tkrats\n");
+    char *opcoes[3]= {
+    "comecar aventura",
+    "regras basicas",
+    "sair do jogo"
+    };
+    int opcao_selecionada=mostrar_opcoes(opcoes,3);
+    if(opcao_selecionada == 1)
+    {
+        iniciar();
+    }
+    if(opcao_selecionada == 2)
+    {
+        regras();
+    }
+    if(opcao_selecionada == 3)
+    {
+        printf("\nVoce optou sair do jogo");
+        system("exit");
+    }
+}
+void iniciar()
+{
+    definir_titulo("escolher nome");
+    limpar_tela();
+    printf("\nEscolha um nome para seu personagem:");
+    scanf("%s",&player.nome); // le o nome do personagem com os espacos
+    printf("O nome do seu perssonagem será %s, concorda?",player.nome);
+    if(mostrar_sim_ou_nao()==SIM)
+    {
+        aventura();
+    }
+	else
+	{
+        iniciar();
+    }
+}
+void regras()
+{
+    limpar_tela(); // regras
+    definir_titulo("krats - Regras");
+    printf("\n krats - regras");
+    printf("\n o jogo e hardcore ou seja nao tem sistema de salvamento, se saiu do jogo PERDEU TUDO que voce ganhou");
+    printf("\n incluindo itens e pontos de habilidades.");
+    printf("\n O JOGO E INFINITO! NAO TEM FIM");
+    printf("\n ");
+    printf("\n 1 - Jamais tentarais salvar o jogo. ");
+    printf("\n 2 - Nao quebrarais o monitor.");
+    printf("\n 3 - Jamais saira do Krats sem motivo.");
+    printf("\n 4 - Podes tentais usar qual quer tipos de Cheat, mais nao fucionarais!");
+    printf("\n 5 - Nao tentarais Bugar o jogo, se nao serais PUNIDO!");
+    printf("\n pressione alguma tecla.");
+    getchar();
+    limpar_tela();
+    menu();
+}
+void aventura()
+{
+    limpar_tela(); // pro-logo
+    definir_titulo("krats - Pro-Logo");
+    printf("\n Tudo começou quando um monarca acordou de um sono profundo.",player.nome);
+    getchar();
+    printf("\n monarca acorda, e percebe-se que esta dentro de uma Prisao destruida,");
+    getchar();
+    printf("\n %s tenta lembrar do teu nome", player.nome);
+    getchar();
+	printf("\n Após 5 segundos depois de lembrar cai uma chave.",player.nome);
+    getchar();
+    printf("\n ele se perguntou da onde que caiu esta chave.");
+	getchar(); 
+	printf("\n Entao ele utilizou esta chave");
+    getchar();
+    printf("\n Ao abrir a cela ele se deparou-se... ");
+    getchar();
+    flood(); // pra começar o karai todo
+}
+void flood()
+{
+    // dados player
+    definir_titulo("krats - Batalhando");
+    // se nao for a primeira vez
+
+    limpar_tela();
+    if(primeira_vez) // quando é a primeira vez dele no jogo
+    {
+    	escolher_npc_nome(&npc,"Sentinela");
+        printf("\n Com uma %s",npc.nome);
+        primeira_vez = 0;
+        printf("\n ");
+        // mostrar dados do player e do npc
+        printf("\t\nDado do %s       \t Dados %s",player.nome, npc.nome);
+        printf("\t\nVida:       %i     \t    %i",player.vida,npc.vida);
+        printf("\t\nBloqueio:   %i     \t    %i",player.bloqueo,npc.bloqueo);
+        printf("\t\nDano:       %i     \t    %i",player.dano,npc.dano);
+        printf("\t\nSorte:      %i     \t    %i",player.sorte,npc.sorte);
+        printf("\t\nLevel:      %i     \t    %i",player.level,npc.level);
+        printf("\t\nOuro:       %i     \t    ??",player.ouro);
+        printf("\n ");
+        char *opcoes[3] ={
+            "Atacar",
+            "Passar por ele(a) sem atacar.",
+            "Tentar ir por outro caminho"
+        };
+        int opcao_escolhida=mostrar_opcoes(opcoes,3);
+        if(opcao_escolhida <= opcoes || opcao_escolhida >= opcoes)
+        {
+        	getchar();
+		}
+        if(opcao_escolhida == 1)
+        {
+           while(1) { // loop infinito
+                atacar(&npc); // atacar
+                getchar();
+                if(npc.vida<=1) { // se o npc morreu
+                    printf("\nVOCE MATOU O NPC!");
+                    getchar();
+                    limpar_tela();
+                    flood();
+                    break; // sair do loop
+                }
+                receber_ataque(&npc);
+
+                if(player.vida<=1) { // se o player morreu
+                	limpar_tela();
+                    printf("\nVOCE MORREU!");
+                    getchar();
+                    menu();
+                    break; // sair do loop
+                }
+                getchar();
+           }
+        }
+        if(opcao_escolhida== 2)
+        {
+
+        }
+        if(opcao_escolhida== 3)
+        {
+            primeira_vez = 1;
+            flood();
+        }
+    }
+    else
+    {
+    	escolher_npc_aleatorio(&npc);
+    	limpar_tela();
+    	int escolher;
+    	scanf("%d",&escolher);
+    	if(escolher == 1)
+    	{
+		}
+	}
+    getchar();
+}
+void receber_ataque(NPC *inimigo) { // inimigo é o npc que ele esta levando ataque
+    int dano_npc=inimigo->dano;
+   // se o npc tiver sorte dobra o dano e subtrai 15
+    if(sortear(npc.sorte))
+    {
+        dano_npc*=2; // multiplica por dois
+        dano_npc-=15; // subtrai 15
+    	printf("\n%s deu atack CRITICO em %s",inimigo->nome,player.nome);
+    }
+   // se o dano do npc for maior do que a defesa do player
+    if(npc.dano>player.bloqueo)
+    {
+        dano_npc=dano_npc - player.bloqueo;
+        player.vida = player.vida - dano_npc;
+        printf("\n %s[%d] atacou %s[%d] tirando %d de vida.",inimigo->nome,inimigo->vida,player.nome,player.vida,dano_npc);
+
+    } else { // se dano nao for suficiente
+    	printf("\n %s nao possui dano suficiente para atingir %s.",inimigo->nome,player.nome);
+    }
+
+	if(player.vida <= 1)
+	{
+        player.vida=0;
+		printf("\n%s[%d] matou %s[%d]",inimigo->nome,inimigo->vida,player.nome,player.vida);
+		return 1;
+	}
+}
+void atacar(NPC *inimigo) // inimigo é o npc que ele esta atacando
+ {
+ 	limpar_tela();
+    int dano_player=player.dano;
+
+    // se o player tiver sorte dobra o dano e subtrai 15
+    if(sortear(player.sorte))
+    {
+        dano_player*=2; // multiplica por dois
+        dano_player-=15; // subtrai 15
+
+    	printf("\n%s deu atack CRITICO em %s",player.nome,inimigo->nome);
+    }
+    // se o dano do player for maior do que a defesa do inimigo
+    if(player.dano>inimigo->bloqueo)
+    {
+        dano_player=dano_player - inimigo->bloqueo; // diminui o dano com a defesa do inimigo
+        inimigo->vida = inimigo->vida - dano_player; // tira a vida
+        printf("\n %s[%d] atacou %s[%d] tirando %d de vida.",player.nome,player.vida,inimigo->nome,inimigo->vida,dano_player);
+    }
+    else
+    { // se o dano for menor que a defesa
+    	printf("\n %s nao possui dano suficiente para atingir %s.",player.nome,inimigo->nome);
+    }
+
+
+    if(inimigo->vida <=1)
+	{
+        inimigo->vida=0;
+		printf("\n%s[%d] matou %s[%d]",player.nome,player.vida,inimigo->nome,inimigo->vida);
+		return 1;
+	}
+}
+
