@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+
+#define DELAY  6
+#define Desbug 1 // 2 pra desabilitar e 1 pra ativar
+
+int seg = 0;
+int min = 0;
+int hor = 0;
+int ml = 0;
+int mls = 0;
+
+typedef struct  // structs
+{
+    int Cagando;
+    int Saiu;
+    int Cagou;
+} PESSOA;
+PESSOA pessoa;
+void relogio();
+void cagando();
+
+void structs(PESSOA *pessoa)
+{
+	pessoa->Cagando = 1;
+	pessoa->Cagou = 1;
+	pessoa->Saiu = 1;
+}
+
+int main(void)
+{   
+	SetConsoleTitle("Pessoas Cagando");
+	srand (time(NULL));
+	relogio();
+	return 1;
+}
+void cagando()
+{
+	if(ml >= 5)
+	{
+		int cargar = rand() % 25;
+		if(cargar >= 1 || cargar <= 5)
+		{
+			pessoa.Cagando++;
+		}
+			if(cargar >= 5 || cargar <= 10)
+			{
+				pessoa.Saiu++;
+				pessoa.Cagando--;
+			}
+				if(cargar >= 10)
+				{
+					pessoa.Cagou++;
+				}
+				if(cargar >= 15)
+					{
+						// debug
+						pessoa.Cagando--;
+					}
+	}
+	pessoa.Cagando = pessoa.Cagou+pessoa.Saiu-pessoa.Saiu;
+	if(Desbug != 1)
+	{
+		system("cls");
+	}
+	printf("\nAgora tem %d pessoas cagando.",pessoa.Cagando);
+		if(Desbug == 1)
+		{
+			printf("\nPessoas que saiu do cagao %d",pessoa.Saiu);
+			printf("\nPessoas que cagaram %d",pessoa.Cagou+pessoa.Saiu);
+		}
+}
+void relogio()
+{
+	for( ;; )
+	{
+		mls++;
+		usleep(0);
+		cagando();
+		if(Desbug == 1)
+		{
+			system("cls");
+			printf("%i:%i:%i:%i:%i",hor,min,seg,ml,mls);
+		}
+		if(mls == DELAY)
+		{
+			ml++;
+			mls = 0;
+		}
+		if(ml == 10)
+		{
+			seg++;
+			ml = 0;
+		}
+		if(seg >= 50)
+		{
+			min++;
+			seg = 0;
+		}
+		if(min == 60)
+		{
+			hor++;
+			min = 0;
+		}
+		if(hor == 24)
+		{
+			Sleep(5000);
+			printf("Resetando...");
+			hor = 0;
+			min = 0;
+			seg = 0;
+		}
+	}	
+}
