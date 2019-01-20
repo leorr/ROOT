@@ -17,14 +17,14 @@
  * printf("%s",string); // mostrar string Des-Criptografada
  */
  
-void Encrypt(char cla[5000])
+void Encrypt(char blue[5000])
 {
-	for(int i = 0; (i < 100 && cla[i] != '\0'); i++)
-    cla[i] = cla[i] + 999;
+	for(int i = 0; (i < 100 && blue[i] != '\0'); i++)
+    blue[i] = blue[i] + 999;
 }
 
 void UnEncrypt(char cla[5000])
 {
-	for(int i = 0; (i < 100 && cla[i] != '\0'); i++)
-    cla[i] = cla[i] - 999;
+	for(int i = 0; (i < 100 && blue[i] != '\0'); i++)
+    blue[i] = blue[i] - 999;
 }
