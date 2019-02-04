@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include <conio.h>
 
 //////////////////////////
 /// Use as flecha do teclado para mover o mouse
