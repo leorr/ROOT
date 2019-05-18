@@ -15,7 +15,11 @@ Linguagem do servidor,
 
 SSL Detect,
 
-SSL criptrografia.
+SSL criptrografia,
+
+Localização da HOST,
+
+Detectar servidor privado ou aberto.
 
 # Ferramenta desevolvida por SrBlue.
 
