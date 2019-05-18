@@ -1,7 +1,7 @@
 # Ferramenta SrRecon.
 
 # Utilidade
-Essa ferramenta Pega as portas abertas,
+Essa ferramenta pega:
 
 tipo de servidor usado na host,
 
